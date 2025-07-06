@@ -2,7 +2,7 @@
     <div class="customer-container">
         <p class="title">Customer Management</p>
     </div>
-  <a-table :columns="columns" :data-source="data.customers">
+  <a-table :columns="columns" :data-source="data.customers" :pagination="data.pagination" @change="handleTableChange">
     <template #headerCell="{ column }">
       <template v-if="column.key === 'name'">
         <span>
@@ -32,6 +32,8 @@
 import { SmileOutlined } from '@ant-design/icons-vue';
 import { onMounted, reactive } from 'vue';
 import apiClient from '../../common/configuration/axios.config';
+import type { TablePaginationConfig } from 'ant-design-vue';
+import type { ICustomer } from './interface/customer.interface';
 const columns = [
   {
     name: 'Name',
@@ -69,31 +71,46 @@ const columns = [
   },
 ];
 
-const data = reactive<any>({
+const data = reactive<ICustomer>({
   customers: [],
   pagination: {
     current: 1,
     pageSize: 10,
     total: 0,
+    showSizeChanger: true,
   }
 })
 
-const fetchCustomers = async () => {
+const handleTableChange = (pagination: TablePaginationConfig) => {
+  fetchCustomers(pagination.current ?? 1, pagination.pageSize ?? 10);
+};
+
+const fetchCustomers = async (page: number, limit: number) => {
   try {
     const response = await apiClient.get('students', {
       params: {
-        page: 1,
-        limit: 10,
+        page,
+        limit,
       },
     });
     data.customers = response.data.data;
+
+    // Set Pagination
+    const pagination = response.data.pagination;
+    data.pagination = {
+      current: pagination.currentPage,
+      pageSize: pagination.limit,
+      total: pagination.total,
+      showSizeChanger: true,
+    };
+    console.log(data.pagination);
   } catch (err: any) {
     console.log(err)
   }
 }
 
 onMounted(async () => {
-  await fetchCustomers();
+  await fetchCustomers(data.pagination.current, data.pagination.pageSize);
 })
 </script>
 
