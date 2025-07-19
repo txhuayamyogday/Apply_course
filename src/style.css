@@ -5,6 +5,10 @@
 .ant-input {
   font-family: 'Noto Sans Lao', sans-serif;
 }
+
+:where(.css-dev-only-do-not-override-1p3hq3p).ant-picker-large {
+  width: 100%;
+}
 /* :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

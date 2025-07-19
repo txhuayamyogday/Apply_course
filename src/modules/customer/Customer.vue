@@ -20,20 +20,198 @@
       </template>
       <template v-else-if="column.key === 'action'">
         <span>
-          <a>Edit</a>
+          <a @click="showModalEdit(record)">Edit</a>
           <a-divider type="vertical" />
-          <a style="color:red">Delete</a>
+          <a-popconfirm
+            v-if="data.customers.length"
+            title="Sure to delete?"
+            @confirm="onDelete(record.id)"
+          >
+            <a>Delete</a>
+          </a-popconfirm>
         </span>
       </template>
     </template>
   </a-table>
+
+  <!-- Modal Edit -->
+  <div>
+    <a-modal v-model:open="open" title="Basic Modal" @ok="handleSubmit">
+       <a-form
+        ref="formRef"
+        :model="formState"
+        name="basic"     
+        :label-col="{ span: 24 }"   
+        :wrapper-col="{ span: 24 }"
+        autocomplete="off"
+        @finish="onFinish"
+        @finishFailed="onFinishFailed"
+        class="login-form"
+      >
+        <a-form-item
+          label="ຊື່ຜູ້ໃຊ້"
+          name="username"
+          :rules="[
+            { required: true, message: 'ກະລຸນາປ້ອນຊື່ຜູ້ໃຊ້ກ່ອນ...' }
+          ]"
+        >
+          <a-input v-model:value="formState.username" placeholder="ຊື່ຜູ້ໃຊ້..." size="large">
+            <template #prefix>
+              <UserOutlined class="site-form-item-icon" />
+            </template>
+          </a-input>
+        </a-form-item>
+
+        <a-form-item
+          label="ນາມສະກູນ"
+          name="surname"
+          :rules="[
+            { required: true, message: 'ກະລຸນາປ້ອນຊື່ຜູ້ໃຊ້ກ່ອນ...' }
+          ]"
+        >
+          <a-input v-model:value="formState.surname" placeholder="ຊື່ຜູ້ໃຊ້..." size="large">
+            <template #prefix>
+              <UserOutlined class="site-form-item-icon" />
+            </template>
+          </a-input>
+        </a-form-item>
+
+        <a-form-item
+          label="ທີ່ຢູ່"
+          name="address"
+          :rules="[
+            { required: true, message: 'ກະລຸນາປ້ອນຊື່ຜູ້ໃຊ້ກ່ອນ...' }
+          ]"
+        >
+          <a-input v-model:value="formState.address" placeholder="ຊື່ຜູ້ໃຊ້..." size="large">
+            <template #prefix>
+              <UserOutlined class="site-form-item-icon" />
+            </template>
+          </a-input>
+        </a-form-item>
+
+         <a-form-item
+          label="ອີເມວ"
+          name="email"
+          :rules="[
+            { required: true, message: 'ກະລຸນາປ້ອນອີເມວກ່ອນ...' }
+          ]"
+        >
+          <a-input v-model:value="formState.email" placeholder="ອີເມວ..." size="large">
+            <template #prefix>
+              <UserOutlined class="site-form-item-icon" />
+            </template>
+          </a-input>
+        </a-form-item>
+
+        <a-form-item
+          label="ວັນ ເດືອນ ປີເກີດ"
+          name="birth_date"
+          :rules="[
+            { required: true, message: 'ກະລຸນາປ້ອນຊື່ຜູ້ໃຊ້ກ່ອນ...' }
+          ]"
+        >
+            <a-date-picker v-model:value="formState.birth_date" placeholder="ຊື່ຜູ້ໃຊ້..." size="large">
+            <template #prefix>
+              <UserOutlined class="site-form-item-icon" />
+            </template>
+            </a-date-picker>
+        </a-form-item>
+
+        <a-form-item
+          label="ເພດ"
+          name="gender"
+          :rules="[
+            { required: true, message: 'ກະລຸນາປ້ອນຊື່ຜູ້ໃຊ້ກ່ອນ...' }
+          ]"
+        >
+            <a-radio-group v-model:value="formState.gender">
+              <a-radio-button value="female">ຍີງ</a-radio-button>
+              <a-radio-button value="male">ຊາຍ</a-radio-button>
+            </a-radio-group>
+        </a-form-item>
+
+      </a-form>
+    </a-modal>
+  </div>
+  <!-- End -->
 </template>
 <script lang="ts" setup>
 import { SmileOutlined } from '@ant-design/icons-vue';
-import { onMounted, reactive } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 import apiClient from '../../common/configuration/axios.config';
 import type { TablePaginationConfig } from 'ant-design-vue';
 import type { ICustomer } from './interface/customer.interface';
+import { message } from 'ant-design-vue';
+import { UserOutlined } from '@ant-design/icons-vue';
+import dayjs from 'dayjs';
+
+import type { FormInstance } from 'ant-design-vue';
+
+const formRef = ref<FormInstance | null>(null);
+
+const handleSubmit = async () => {
+  try {
+    await formRef.value?.validate();
+    // If validation passes, trigger onFinish with formState
+    onFinish({ ...formState });
+    open.value = false;
+  } catch (error) {
+    // Validation failed
+    onFinishFailed(error);
+  }
+};
+
+interface FormState {
+  email: string;
+  surname: string;
+  username: string;
+  address: string;
+  birth_date: dayjs.Dayjs | null; 
+  gender: string;
+}
+
+const formState = reactive<FormState>({
+  email: '',
+  surname: '',
+  username: '',
+  address: '',
+  birth_date: null,
+  gender: ''
+});
+
+const onFinish = (values: any) => {
+  console.log('value', values);
+}
+
+const onFinishFailed = (err: any) => {
+  console.log('err: ', err)
+}
+
+const open = ref(false)
+
+const showModalEdit = (value: any) => {
+  formState.username = value.name;
+  formState.surname = value.surname;
+  formState.address = value.address;
+  formState.birth_date = value.birth_date ? dayjs(value.birth_date) : null; 
+  formState.gender = value.gender;
+  formState.email = value.user.email;
+  open.value = true;
+}
+
+/** Delete */
+const onDelete = async (id: number) => {
+  try {
+    await apiClient.delete(`students/${id}`);
+    message.success('Customer deleted successfully');
+    await fetchCustomers(data.pagination.current, data.pagination.pageSize);
+  } catch (error) {
+    console.error(error);
+    message.error('Failed to delete customer');
+  }
+};
+
 const columns = [
   {
     name: 'Name',
