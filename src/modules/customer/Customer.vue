@@ -145,8 +145,10 @@ import type { ICustomer } from './interface/customer.interface';
 import { message } from 'ant-design-vue';
 import { UserOutlined } from '@ant-design/icons-vue';
 import dayjs from 'dayjs';
-
+import { useRegister } from './composible/register.ts';
 import type { FormInstance } from 'ant-design-vue';
+
+const { adminUpdateProfile } = useRegister();
 
 const formRef = ref<FormInstance | null>(null);
 
@@ -163,6 +165,7 @@ const handleSubmit = async () => {
 };
 
 interface FormState {
+  id: number,
   email: string;
   surname: string;
   username: string;
@@ -172,6 +175,7 @@ interface FormState {
 }
 
 const formState = reactive<FormState>({
+  id: 0,
   email: '',
   surname: '',
   username: '',
@@ -180,8 +184,8 @@ const formState = reactive<FormState>({
   gender: ''
 });
 
-const onFinish = (values: any) => {
-  console.log('value', values);
+const onFinish = async (values: any) => {
+  await adminUpdateProfile(values);
 }
 
 const onFinishFailed = (err: any) => {
@@ -197,6 +201,7 @@ const showModalEdit = (value: any) => {
   formState.birth_date = value.birth_date ? dayjs(value.birth_date) : null; 
   formState.gender = value.gender;
   formState.email = value.user.email;
+  formState.id = value.id;
   open.value = true;
 }
 

@@ -10,7 +10,20 @@ export function useRegister() {
     return response.data;
   };
 
+  const adminUpdateProfile = async (values: any) => {
+    const response = await apiClient.put(`/students/${values.id}`, {
+      name: values.username,
+      surname: values.surname,
+      birth_date: values.birth_date,
+      gender: values.gender,
+      email: values.email,
+      address: values.address,
+    });
+    return response.data;
+  };
+
   return {
     register,
+    adminUpdateProfile,
   };
 }
