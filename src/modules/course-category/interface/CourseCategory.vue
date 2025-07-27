@@ -28,7 +28,7 @@ const columns = [
 ];
 
 // Reactive data
-const data = reactive<IData>({
+const data = reactive<IData & { isloading: boolean }>({
   categories: [],
   isloading: false,
 });

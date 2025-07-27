@@ -49,14 +49,14 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
-import axios from 'axios';
 import { useRouter } from 'vue-router';
 import { useAuth } from './composible/auth.ts'
 
 const router = useRouter();
 const { login } = useAuth()
+const error = ref<string | null>(null);
 
 interface FormState {
   email: string;
@@ -67,16 +67,18 @@ const formState = reactive<FormState>({
   email: '',
   password: '',
 });
-
 const onFinish = async (values: any) => {
+  error.value = null;
   await login(values.email, values.password)
     .then(() => {
       router.push({ name: "customer" });
     })
-    .catch((error) => {
-      console.error('Login failed:', error);
+    .catch((err) => {
+      error.value = 'Login failed: ' + (err?.message || 'Unknown error');
+      console.error('Login failed:', err);
     });
 };
+
 
 const onFinishFailed = (errorInfo: any) => {
   console.log('Failed:', errorInfo);

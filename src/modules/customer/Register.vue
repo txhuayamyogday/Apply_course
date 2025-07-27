@@ -19,10 +19,12 @@ const formState = reactive<FormState>({
 });
 
 const isLoading = ref(false);
+const error = ref<string | null>(null);
 
 const onFinish = async (values: any) => {
   try {
     isLoading.value = true;
+    error.value = null;
     await register(values);
     clear();
     notification.open({
@@ -38,6 +40,7 @@ const onFinish = async (values: any) => {
       isLoading.value = false;
   } catch (err: any) {
     console.error('Registration error:', err);
+    error.value = err?.message || 'Registration failed. Please try again.';
   } finally {
     isLoading.value = false;
   }
