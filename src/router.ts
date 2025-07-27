@@ -3,6 +3,8 @@ import CustomerPage from "./modules/customer/Customer.vue";
 import LoginPage from "./modules/auth/Login.vue";
 import { authGuard } from "./common/guards/auth.guard";
 import RegisterPage from "./modules/customer/Register.vue";
+import CourseCategory from "./modules/course-category/interface/CourseCategory.vue";
+import CoursePage from "./modules/course/Course.vue";
 
 const routes = [
   {
@@ -14,6 +16,16 @@ const routes = [
         path: "/customer",
         name: "customer",
         component: CustomerPage,
+      },
+      {
+        path: "/course-categories",
+        name: "course.categories",
+        component: CourseCategory,
+      },
+      {
+        path: "/course",
+        name: "course",
+        component: CoursePage,
       },
     ],
   },

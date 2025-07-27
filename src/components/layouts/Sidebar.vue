@@ -7,15 +7,15 @@
           <user-outlined />
           <span>Customer</span>
         </a-menu-item>
-        <a-menu-item key="2">
+        <a-menu-item key="2" @click="handleMenuClick('course.categories')" >
           <video-camera-outlined />
-          <span>Banner</span>
+          <span>Course Category</span>
         </a-menu-item>
-        <a-menu-item key="3">
+        <a-menu-item key="3"  @click="handleMenuClick('course')">
           <upload-outlined />
-          <span>Supplier</span>
+          <span>Course</span>
         </a-menu-item>
-        <a-sub-menu key="sub2">
+        <a-sub-menu key="4" >
           <template #title>
             <span>
               <team-outlined />

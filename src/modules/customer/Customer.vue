@@ -27,7 +27,7 @@
             title="Sure to delete?"
             @confirm="onDelete(record.id)"
           >
-            <a>Delete</a>
+            <a style="color: red;">Delete</a>
           </a-popconfirm>
         </span>
       </template>
@@ -35,8 +35,8 @@
   </a-table>
 
   <!-- Modal Edit -->
-  <div>
-    <a-modal v-model:open="open" title="Basic Modal" @ok="handleSubmit">
+  <div class="modal-container">
+    <a-modal v-model:open="open" title="ຟອມແກ້ໄຂຂໍ້ມູນນັກສຶກສາ" @ok="handleSubmit">
        <a-form
         ref="formRef"
         :model="formState"
@@ -148,7 +148,7 @@ import dayjs from 'dayjs';
 import { useRegister } from './composible/register.ts';
 import type { FormInstance } from 'ant-design-vue';
 
-const { adminUpdateProfile } = useRegister();
+const { adminUpdateProfile, adminDeleteCustomer } = useRegister();
 
 const formRef = ref<FormInstance | null>(null);
 
@@ -208,14 +208,15 @@ const showModalEdit = (value: any) => {
 /** Delete */
 const onDelete = async (id: number) => {
   try {
-    await apiClient.delete(`students/${id}`);
+    await adminDeleteCustomer(id);
     message.success('Customer deleted successfully');
     await fetchCustomers(data.pagination.current, data.pagination.pageSize);
-  } catch (error) {
-    console.error(error);
+  } catch (err: any) {
+    console.error('Delete failed:', err);
     message.error('Failed to delete customer');
   }
 };
+
 
 const columns = [
   {
